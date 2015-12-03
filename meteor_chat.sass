@@ -23,18 +23,33 @@ body
     .chat
       font-family: $font
       padding: 0 1em
-      flex: 1 1 auto
+
+      .user
+        cursor: pointer
 
   .chat-input
+    margin-top: .5em
     flex: 0
-    padding: 1em
+    display: flex
 
-    input
+    .chat-prompt
+      padding: .25em
+      flex: 1
       width: 100%
       font-size: 16px
       font-family: $font
-      padding: .5em
       color: $fg
       background: lighten($bg, 5%)
       border: none
       outline: none
+
+#login-buttons
+  padding: .5em
+  font: $font
+
+  .login-link-text
+    text-decoration: none
+
+  #login-dropdown-list
+    top: auto
+    bottom: 1px

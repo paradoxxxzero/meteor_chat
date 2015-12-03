@@ -9,10 +9,15 @@
     {{/each}}
   </div>
   <form class="chat-input">
-    <input type="text" name="chat" placeholder="Enter a message…" autocomplete="off">
+    {{> loginButtons}}
+    {{#if currentUser}}
+      <input type="text" name="chat" class="chat-prompt" placeholder="Enter a message…" autocomplete="off" style="color: {{currentUser.color}}">
+    {{else}}
+      <input type="text" name="chat" class="chat-prompt" disabled placeholder="<- Please log in first" autocomplete="off">
+    {{/if}}
   </form>
 </body>
 
 <template name="chat">
-  <label class="chat" style="color: {{color}}">{{text}}</label>
+  <label class="chat" style="color: {{color}}"><a class="user" title="{{timestamp}}">&lt;{{user}}&gt;</a> {{text}}</label>
 </template>
