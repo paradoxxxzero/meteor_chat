@@ -1,0 +1,18 @@
+<head>
+  <title>Public chat based on meteor</title>
+</head>
+
+<body>
+  <div class="chats">
+    {{#each chats}}
+      {{> chat}}
+    {{/each}}
+  </div>
+  <form class="chat-input">
+    <input type="text" name="chat" placeholder="Enter a message…" autocomplete="off">
+  </form>
+</body>
+
+<template name="chat">
+  <label class="chat" style="color: {{color}}">{{text}}</label>
+</template>

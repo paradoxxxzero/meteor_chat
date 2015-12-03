@@ -1,0 +1,40 @@
+@import url(https://fonts.googleapis.com/css?family=Nova+Mono)
+
+$bg: #000000
+$fg: #aaaaaa
+$font: "Nova Mono", monopace
+html, body
+  height: 100%
+  margin: 0
+
+body
+  background: $bg
+  color: $fg
+  display: flex
+  flex-direction: column
+
+  .chats
+    display: flex
+    flex: 1
+    flex-direction: column-reverse
+    font-size: 16px
+    overflow-y: auto
+
+    .chat
+      font-family: $font
+      padding: 0 1em
+      flex: 1 1 auto
+
+  .chat-input
+    flex: 0
+    padding: 1em
+
+    input
+      width: 100%
+      font-size: 16px
+      font-family: $font
+      padding: .5em
+      color: $fg
+      background: lighten($bg, 5%)
+      border: none
+      outline: none
