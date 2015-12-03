@@ -23,6 +23,7 @@ body
     .chat
       font-family: $font
       padding: 0 1em
+      animation: talk 500ms
 
       .user
         cursor: pointer
@@ -42,6 +43,13 @@ body
       background: lighten($bg, 5%)
       border: none
       outline: none
+  footer
+    font: $font
+    font-size: .5em
+    text-align: right
+    color: lighten($bg, 25%)
+    a
+      color: lighten($bg, 35%)
 
 #login-buttons
   padding: .5em
@@ -53,3 +61,11 @@ body
   #login-dropdown-list
     top: auto
     bottom: 1px
+
+@keyframes talk
+  from
+    transform: rotateX(90deg)
+    opacity: .2
+  to
+    transform: rotateX(0)
+    opacity: 1
