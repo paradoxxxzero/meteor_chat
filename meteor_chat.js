@@ -3,9 +3,26 @@ Chats = new Mongo.Collection('chats')
 r = i => Math.random() * i <<0
 random_color = () => `hsla(${r(360)}, 100%, 75%, 1)`
 
+function notify(chat) {
+  if (Notification.permission === "granted") {
+    var notification = new Notification(`${chat.user} says ${chat.text}`)
+    notification.addEventListener('click', e => {
+      window.focus()
+      notification.close()
+    })
+  } else if (Notification.permission !== 'denied') {
+    Notification.requestPermission(function (permission) {
+      if (permission === "granted") {
+        notify(chat)
+      }
+    })
+  }
+}
+
 if (Meteor.isClient) {
+  var init = true
   Meteor.subscribe("userData")
-  Meteor.subscribe("chats")
+  Meteor.subscribe("chats", () => init = false)
 
   Template.body.helpers({
     chats: Chats.find({}, {sort: {ts: -1}, limit: 100})
@@ -16,6 +33,9 @@ if (Meteor.isClient) {
       event.preventDefault()
       Meteor.call('talk', event.target.chat.value)
       event.target.chat.value = ""
+    },
+    "change .color": event => {
+      Meteor.call('changeColor', event.target.value)
     },
     "click .chats": e => document.querySelector('.chat-prompt').focus()
   })
@@ -34,13 +54,24 @@ if (Meteor.isClient) {
     }
   })
 
+  Chats.find().observeChanges({
+    added: function (id, chat) {
+      if(init) {
+        return
+      }
+      if (Meteor.user() && Meteor.user().username != chat.user) {
+        notify(chat)
+      }
+    }
+  })
+
   Accounts.ui.config({
     passwordSignupFields: "USERNAME_ONLY"
   })
 }
 
 Meteor.methods({
-  talk: (chat) => {
+  talk: chat => {
     if (!Meteor.userId() || !chat) {
       return
     }
@@ -53,13 +84,15 @@ Meteor.methods({
       color: Meteor.user().color,
       ts: new Date()
     })
+  },
+  changeColor: color => {
+    Meteor.users.update(Meteor.userId(), {$set: {color: color}})
   }
 })
 
 if (Meteor.isServer) {
   Meteor.users.allow({
     update: function (userId, doc, fields, modifier) {
-      print(userId)
       return true
     }
   })

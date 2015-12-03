@@ -12,6 +12,7 @@
     {{> loginButtons}}
     {{#if currentUser}}
       <input type="text" name="chat" class="chat-prompt" placeholder="Enter a message…" autocomplete="off" style="color: {{currentUser.color}}">
+      <input type="color" name="color" class="color" value="{{currentUser.color}}">
     {{else}}
       <input type="text" name="chat" class="chat-prompt" disabled placeholder="<- Please log in first" autocomplete="off">
     {{/if}}
