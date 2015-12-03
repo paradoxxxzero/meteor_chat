@@ -4,9 +4,16 @@
 
 <body>
   <div class="chats">
-    {{#each chats}}
-      {{> chat}}
-    {{/each}}
+    <div class="chat-list">
+      {{#each chats}}
+        {{> chat}}
+      {{/each}}
+    </div>
+    <div class="user-list">
+      {{#each users}}
+        {{> user}}
+      {{/each}}
+    </div>
   </div>
   <form class="chat-input">
     {{> loginButtons}}
@@ -25,4 +32,8 @@
 
 <template name="chat">
   <label class="chat" style="color: {{color}}"><a class="user" title="{{timestamp}}">&lt;{{user}}&gt;</a> {{text}}</label>
+</template>
+
+<template name="user">
+  <label class="user" style="color: {{color}}">{{username}}</label>
 </template>

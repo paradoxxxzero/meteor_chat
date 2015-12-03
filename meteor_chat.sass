@@ -16,17 +16,30 @@ body
   .chats
     display: flex
     flex: 1
-    flex-direction: column-reverse
-    font-size: 16px
-    overflow-y: auto
+    height: 100%
+    min-height: 0
 
-    .chat
-      font-family: $font
-      padding: 0 1em
-      animation: talk 500ms
+    .user-list
+      display: flex
+      font-size: 14px
+      overflow-y: auto
+      flex-direction: column
+      flex: 1
 
-      .user
-        cursor: pointer
+    .chat-list
+      display: flex
+      flex: 20
+      flex-direction: column-reverse
+      font-size: 16px
+      overflow-y: auto
+
+      .chat
+        font-family: $font
+        padding: 0 1em
+        animation: talk 500ms
+
+        .user
+          cursor: pointer
 
   .chat-input
     margin-top: .5em

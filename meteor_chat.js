@@ -4,8 +4,10 @@ r = i => Math.random() * i <<0
 random_color = () => `hsla(${r(360)}, 100%, 75%, 1)`
 
 function notify(chat) {
+  var text = `${chat.user} says ${chat.text}`
+  document.title = text
   if (Notification.permission === "granted") {
-    var notification = new Notification(`${chat.user} says ${chat.text}`)
+    var notification = new Notification(text)
     notification.addEventListener('click', e => {
       window.focus()
       notification.close()
@@ -25,7 +27,8 @@ if (Meteor.isClient) {
   Meteor.subscribe("chats", () => init = false)
 
   Template.body.helpers({
-    chats: Chats.find({}, {sort: {ts: -1}, limit: 100})
+    chats: Chats.find({}, {sort: {ts: -1}, limit: 100}),
+    users: Meteor.users.find()
   })
 
   Template.body.events({
@@ -47,7 +50,7 @@ if (Meteor.isClient) {
   });
 
   Tracker.autorun(() => {
-    var chats = document.querySelector('.chats')
+    var chats = document.querySelector('.chat-list')
 
     if (chats) {
       chats.scrollTo(Infinity)
@@ -99,9 +102,8 @@ if (Meteor.isServer) {
   Meteor.publish("userData", function () {
     if (this.userId) {
       return Meteor.users.find({
-        _id: this.userId
       }, {
-        fields: {'color': 1}
+        fields: {'username': 1, 'color': 1}
       })
     } else {
       this.ready()
