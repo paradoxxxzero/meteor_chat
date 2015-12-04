@@ -14,6 +14,9 @@
         {{> user}}
       {{/each}}
     </div>
+    <div class="drawing-area">
+      {{> canvas}}
+    </div>
   </div>
   <form class="chat-input">
     {{> loginButtons}}
@@ -32,6 +35,10 @@
 
 <template name="chat">
   <label class="chat" style="color: {{color}}"><a class="user" title="{{timestamp}}">&lt;{{user}}&gt;</a> {{text}}</label>
+</template>
+
+<template name="canvas">
+  <canvas class="canvas"></canvas>
 </template>
 
 <template name="user">

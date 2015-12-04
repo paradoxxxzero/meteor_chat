@@ -23,13 +23,22 @@ body
       font-family: $font
       display: flex
       font-size: 14px
+      overflow-x: hidden
       overflow-y: auto
       flex-direction: column
       flex: 1
+      border-right: 1px solid lighten($bg, 10%)
+      border-left: 1px solid lighten($bg, 10%)
+
+    .drawing-area
+      cursor: crosshair
+      -moz-user-select: none
+      -webkit-user-select: none
+      flex: 10
 
     .chat-list
       display: flex
-      flex: 20
+      flex: 10
       flex-direction: column-reverse
       font-size: 16px
       overflow-y: auto
