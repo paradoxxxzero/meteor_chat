@@ -24,18 +24,31 @@ function notify(chat) {
     })
   }
 }
+function plot(ctx, dot) {
+  ctx.globalAlpha = 0.5
+  ctx.beginPath()
+  ctx.fillStyle = dot.color
+  ctx.arc(dot.x, dot.y, dot.size, 2 * Math.PI, false)
+  ctx.fill()
+}
 
 if (Meteor.isClient) {
   var init = true,
       canvas = null,
-      ctx = null
+      ctx = null,
+      redraw = false
   Meteor.subscribe("userData")
   Meteor.subscribe("dots")
   Meteor.subscribe("chats", () => init = false)
+  Session.setDefault('dotSize', 5)
+  Session.setDefault('showUserList', true)
+  Session.setDefault('showDrawingArea', true)
 
   Template.body.helpers({
     chats: Chats.find({}, {sort: {ts: -1}}),
-    users: Meteor.users.find({}, {sort: {count: -1}})
+    users: Meteor.users.find({}, {sort: {count: -1}}),
+    showUserList: () => Session.get('showUserList'),
+    showDrawingArea: () => Session.get('showDrawingArea')
   })
 
   Template.body.events({
@@ -53,7 +66,14 @@ if (Meteor.isClient) {
     "change .color": event => {
       Meteor.call('changeColor', event.target.value)
     },
-    "click .chats": e => document.querySelector('.chat-prompt').focus()
+    "click .chats": e => document.querySelector('.chat-prompt').focus(),
+    'click .features-toggle .user-list-toggle': e => Session.set('showUserList', !Session.get('showUserList')),
+    'click .features-toggle .drawing-area-toggle': e => {
+      Session.set('showDrawingArea', !Session.get('showDrawingArea'))
+      if (Session.get('showDrawingArea')) {
+        redraw = true
+      }
+    }
   })
 
   Template.canvas.onRendered(function () {
@@ -61,17 +81,24 @@ if (Meteor.isClient) {
     ctx = canvas.getContext('2d')
     canvas.width = canvas.parentNode.clientWidth
     canvas.height = canvas.parentNode.clientHeight
+    if (redraw) {
+      for (let dot of Dots.find().fetch()) {
+        plot(ctx, dot)
+      }
+      redraw = false
+    }
   })
 
   var drawing = false
   Template.canvas.events({
+    'wheel .canvas': event => Session.set('dotSize', Session.get('dotSize') * (event.originalEvent.deltaY > 0 ? 1.2 : 1/1.2)),
     'mousedown .canvas': event => drawing = true,
     'mouseup .canvas': event => drawing = false,
     'mousemove .canvas': event => {
       if (!drawing) {
         return
       }
-      Meteor.call('drawDot', event.offsetX, event.offsetY)
+      Meteor.call('drawDot', event.offsetX, event.offsetY, Session.get('dotSize'))
     }
   })
   Template.user.events({
@@ -106,13 +133,15 @@ if (Meteor.isClient) {
   })
   Dots.find().observeChanges({
     added: function (id, dot) {
-      ctx.globalAlpha = 0.5
-      ctx.beginPath()
-      ctx.fillStyle = dot.color
-      ctx.arc(dot.x, dot.y, 5, 2 * Math.PI, false)
-      ctx.fill()
+      if (!ctx) {
+        return
+      }
+      plot(ctx, dot)
     },
     removed: function (id) {
+      if (!ctx) {
+        return
+      }
       ctx.clearRect(0, 0, canvas.width, canvas.height)
     }
   })
@@ -145,10 +174,11 @@ Meteor.methods({
   changeColor: color => {
     Meteor.users.update(Meteor.userId(), {$set: {color: color}})
   },
-  drawDot: (x, y) => {
+  drawDot: (x, y, size) => {
     Dots.insert({
       x,
       y,
+      size,
       user: Meteor.user().username,
       color: Meteor.user().color,
       ts: new Date()

@@ -9,13 +9,21 @@
         {{> chat}}
       {{/each}}
     </div>
-    <div class="user-list">
-      {{#each users}}
-        {{> user}}
-      {{/each}}
-    </div>
-    <div class="drawing-area">
-      {{> canvas}}
+    {{#if showUserList}}
+      <div class="user-list">
+        {{#each users}}
+          {{> user}}
+        {{/each}}
+      </div>
+    {{/if}}
+    {{#if showDrawingArea}}
+      <div class="drawing-area">
+        {{> canvas}}
+      </div>
+    {{/if}}
+    <div class="features-toggle">
+      <button class="user-list-toggle{{#if showUserList}} pressed{{/if}}">👫</button>
+      <button class="drawing-area-toggle{{#if showDrawingArea}} pressed{{/if}}">🖼</button>
     </div>
   </div>
   <form class="chat-input">

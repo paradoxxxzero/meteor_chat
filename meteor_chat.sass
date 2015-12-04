@@ -63,6 +63,20 @@ body
         .user
           cursor: pointer
 
+    .features-toggle
+      display: flex
+      flex-direction: column
+
+      button
+        margin: .1em
+        border: 1px solid $fg
+        background: $fg
+        color: $bg
+        font-size: 2em
+        &.pressed
+          background: $bg
+          color: $fg
+
   .chat-input
     margin-top: .5em
     display: flex
