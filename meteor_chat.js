@@ -35,7 +35,7 @@ if (Meteor.isClient) {
 
   Template.body.helpers({
     chats: Chats.find({}, {sort: {ts: -1}}),
-    users: Meteor.users.find()
+    users: Meteor.users.find({}, {sort: {count: -1}})
   })
 
   Template.body.events({
@@ -72,6 +72,11 @@ if (Meteor.isClient) {
         return
       }
       Meteor.call('drawDot', event.offsetX, event.offsetY)
+    }
+  })
+  Template.user.events({
+    'click .user': function (event) {
+      Meteor.call('upUser', this._id)
     }
   })
 
@@ -149,7 +154,14 @@ Meteor.methods({
       ts: new Date()
     })
   },
-  clearDots: () => Dots.remove({})
+  clearDots: () => Dots.remove({}),
+  upUser: (userId) => {
+    var user = Meteor.users.findOne(userId)
+    if (!user) {
+      throw new Meteor.Error(`Unknow user ${userId}`)
+    }
+    Meteor.users.update(userId, {$set: {count: (user.count || 0) + 1}})
+  }
 })
 
 if (Meteor.isServer) {
@@ -162,7 +174,8 @@ if (Meteor.isServer) {
     if (this.userId) {
       return Meteor.users.find({
       }, {
-        fields: {'username': 1, 'color': 1}
+        fields: {username: 1, color: 1, count: 1},
+        sort: {count: -1}
       })
     } else {
       this.ready()

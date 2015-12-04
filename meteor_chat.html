@@ -42,5 +42,5 @@
 </template>
 
 <template name="user">
-  <label class="user" style="color: {{color}}">{{username}}</label>
+  <label class="user" title="Add love to {{username}}" style="color: {{color}}">{{username}}{{#if count}} ({{count}}){{/if}}</label>
 </template>
